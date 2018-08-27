@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crm.mapper.ScimgMapper">
+
+
+	<insert id="save" parameterType="Scimg" useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO crm_wjsc
+		(scname,date,pic)
+		VALUES
+		(#{scname},#{date},#{pic});
+
+	</insert>
+
+	<select id="list" resultType="Scimg">
+		select * from crm_wjsc order by date DESC;
+	</select>
+
+
+	<delete id="deleteimg" parameterType="int">
+		DELETE FROM crm_wjsc
+		WHERE id=#{id}
+	</delete>
+
+
+
+
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crm.mapper.KehuMapper">
+	<resultMap type="Kehu" id="khList">
+		<id property="khid" column="khid" />
+		<association property="user" javaType="User">
+			<id property="uid" column="u_uid" />
+		</association>
+	</resultMap>
+	<!-- 获取客户列表 -->
+	<select id="getkhList" resultMap="khList">
+		SELECT k.*,k.khss,u.uid AS u_uid,u.* FROM crm_kehu k,crm_user u
+		<where>
+			k.khss = u.uid
+			<if test="d1 != null and d2 == null">
+				and k.createD >= #{d1}
+			</if>
+			<if test="d1 == null and d2 != null">
+				and k.createD >= #{d2}
+			</if>
+			<if test="d1 != null and d2 !=null and d1 > d2">
+				and k.createD>=#{d2} and #{d1} >= k.createD
+			</if>
+			<if test="d1 != null and d2 !=null and d2>d1">
+				and #{d2} >=k.createD and k.createD>=#{d1}
+			</if>
+			<if test="d3 != null">
+				and khname LIKE CONCAT('%',#{d3},'%')
+			</if>
+			<if test="d4 != null">
+				and khphone = #{d4}
+			</if>
+		</where>
+		ORDER BY k.createD DESC LIMIT #{from},#{psize}
+	</select>
+
+	<!-- 获取客户总数 -->
+	<select id="getCount" resultType="int">
+		SELECT COUNT(1) FROM crm_kehu
+		<where>
+			1=1
+			<if test="d1 != null and d2 == null">
+				and createD >= #{d1}
+			</if>
+			<if test="d1 == null and d2 != null">
+				and createD >= #{d2}
+			</if>
+			<if test="d1 != null and d2 !=null and d1 > d2">
+				and createD>=#{d2} and #{d1} >= createD
+			</if>
+			<if test="d1 != null and d2 !=null and d2>d1">
+				and #{d2} >=createD and createD>=#{d1}
+			</if>
+			<if test="d3 != null">
+				and khname LIKE CONCAT('%',#{d3},'%')
+			</if>
+			<if test="d4 != null">
+				and khphone = #{d4}
+			</if>
+		</where>
+	</select>
+
+	<!-- 获取全部的员工 -->
+	<select id="getUser" resultType="User">
+		SELECT * FROM crm_user
+	</select>
+
+	<!-- 新增一条用户 -->
+	<insert id="addKehu" parameterType="Kehu" useGeneratedKeys="true"
+		keyProperty="khid">
+		INSERT INTO
+		crm_kehu(khname,khdz,khphone,khss,createD,sfhz,sex,ssjl) VALUES
+		(#{khname},#{khdz},#{khphone},#{khss},#{createD},0,#{sex},#{ssjl})
+	</insert>
+
+	<!-- 删除客户 -->
+	<delete id="deleteKehu" parameterType="int">
+		DELETE FROM crm_kehu WHERE
+		khid = #{scid}
+	</delete>
+
+	<!-- 按id查询单个客户 -->
+	<resultMap type="Kehu" id="dg">
+		<id property="khid" column="khid" />
+		<association property="user" javaType="User">
+			<id property="uid" column="u_uid" />
+		</association>
+	</resultMap>
+
+	<select id="getOne" parameterType="String" resultMap="dg">
+		SELECT
+		k.*,k.khss,u.uid AS u_uid,u.* FROM crm_kehu k,crm_user u WHERE k.khss
+		= u.uid and khid =
+		#{id}
+	</select>
+
+	<!-- 修改客户信息 -->
+	<update id="doXg" parameterType="Kehu">
+		UPDATE crm_kehu SET
+		khname=#{khname},khdz=#{khdz},khphone=#{khphone},khss=#{khss},sex=#{sex}
+		WHERE khid = #{khid}
+	</update>
+
+	<!-- 确认客户信息 -->
+	<update id="qrKehu" parameterType="Kehu">
+		UPDATE crm_kehu SET
+		khname=#{khname},khdz=#{khdz},khphone=#{khphone},khss=#{khss},sex=#{sex},sfhz=1
+		WHERE khid = #{khid}
+	</update>
+
+	<select id="getUsers" resultType="User">
+		SELECT * FROM crm_user WHERE 2
+		>= urole
+	</select>
+
+	<select id="getKbyP" resultType="Kehu" parameterType="String">
+		SELECT * FROM crm_kehu WHERE khphone = #{d1}
+	</select>
+
+
+
+</mapper>

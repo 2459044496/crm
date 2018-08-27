@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crm.mapper.FankuiMapper">
+
+	<insert id="xzytxx" parameterType="Fankui" useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO crm.crm_fankui (info,uid,createDate)
+		VALUES(#{info},#{uid},#{createDate})
+	</insert>
+
+	<resultMap type="Fankui" id="blist">
+		<id property="id" column="id" />
+		<association property="user" javaType="User">
+			<id property="uid" column="u_uid" />
+		</association>
+
+	</resultMap>
+	<select id="getlist" resultMap="blist">
+		SELECT *,u.uid as u_uid FROM
+		crm_fankui
+		f,crm_user u WHERE f.uid= u.uid order by f.createDate desc LIMIT #{d1},#{d2}
+	</select>
+
+	<select id="getcount" resultType="int">
+		SELECT COUNT(1) FROM crm_fankui
+	</select>
+	
+	<delete id="sccc" parameterType="String">
+	DELETE FROM crm_fankui WHERE id = #{d1}
+	</delete>
+
+</mapper>

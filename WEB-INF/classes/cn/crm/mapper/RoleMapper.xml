@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crm.mapper.RoleMapper">
+
+	<select id="getList" resultType="Role" parameterType="String">
+		SELECT * FROM crm_role
+		<where>
+			<if test="rid != null">
+				id = #{rid}
+			</if>
+		</where>
+	</select>
+
+	<insert id="addjs" parameterType="Role" useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO crm_role (role_Name) VALUES (#{role_Name})
+	</insert>
+
+	<update id="updaterole" parameterType="Role">
+		UPDATE crm_role SET
+		role_Name = #{role_Name} WHERE id = #{id} ;
+	</update>
+
+	<delete id="scjs" parameterType="String">
+		DELETE FROM crm_role WHERE
+		id=#{rid}
+	</delete>
+
+	<delete id="scgz" parameterType="String">
+		DELETE FROM crm_xinzi WHERE rid
+		=#{rid}
+	</delete>
+
+	<update id="gxygb" parameterType="String">
+		UPDATE crm_user SET urole = 4,ubumen=7,xzid =3 WHERE ubumen = #{rid};
+	</update>
+
+
+
+
+
+</mapper>

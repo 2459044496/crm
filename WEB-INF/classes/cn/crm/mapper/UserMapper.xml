@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crm.mapper.UserMapper">
+	<resultMap type="User" id="ulist">
+		<id property="uid" column="uid" />
+		<association property="role" javaType="Role">
+			<id property="id" column="r_id" />
+		</association>
+		<association property="bmen" javaType="Bumen">
+			<id property="bmid" column="bmid" />
+		</association>
+	</resultMap>
+	<!-- 获取客户列表 -->
+	<select id="getUserList" resultMap="ulist">
+		SELECT u.*,r.id AS r_rid,r.*,b.* FROM crm_user u,crm_role
+		r,crm_bumen b
+		<where>
+			u.urole = r.id AND u.ubumen = b.bmid
+			<if test="umingzi != null">
+				and u.uname LIKE CONCAT('%',#{umingzi},'%')
+			</if>
+			<if test="d2 != null">
+				and u.ubumen = #{d2}
+			</if>
+			<if test="d3 != null">
+				and b.bmjl=#{d3}
+			</if>
+		</where>
+		ORDER BY u.createDate DESC LIMIT #{from},#{psize}
+	</select>
+
+	<select id="getCount" resultType="int" parameterType="String">
+		SELECT COUNT(1) FROM crm_user u,crm_bumen b
+		<where>
+			u.ubumen = b.bmid
+			<if test="umingzi != null">
+				and uname LIKE CONCAT('%',#{umingzi},'%')
+			</if>
+			<if test="sf != null">
+				and urole = #{sf}
+			</if>
+			<if test="d2 != null">
+				and u.ubumen = #{d2}
+			</if>
+			<if test="d3 != null">
+				and b.bmjl=#{d3}
+			</if>
+		</where>
+	</select>
+
+	<select id="getRoles" resultType="Role">
+		SELECT * FROM crm_role WHERE id
+		!= 1
+	</select>
+
+	<select id="getBumens" resultType="Bumen" parameterType="String">
+		SELECT * FROM crm_bumen
+		<where>
+			<if test="dj != null and dj != ''">
+				bmdj = #{dj}
+			</if>
+		</where>
+	</select>
+
+	<select id="getUserByc" resultType="User" parameterType="String">
+		SELECT *
+		FROM crm_user WHERE ucode = #{ucode}
+	</select>
+
+	<insert id="addUser" parameterType="User" useGeneratedKeys="true"
+		keyProperty="uid">
+		INSERT INTO crm_user(uname, ucode, upwd, uphone,
+		urole,
+		ubumen,
+		createDate,sex,xzid)
+		VALUES(#{uname},#{ucode},#{upwd},#{uphone},#{urole},#{ubumen},#{createDate},#{sex},#{xzid})
+	</insert>
+
+
+	<resultMap type="User" id="uxg">
+		<id property="uid" column="uid" />
+		<association property="role" javaType="Role">
+			<id property="id" column="r_id" />
+		</association>
+		<association property="bmen" javaType="Bumen">
+			<id property="bmid" column="bmid" />
+		</association>
+	</resultMap>
+	<select id="getUserByid" resultMap="uxg" parameterType="String">
+		SELECT
+		u.*,r.id AS r_rid,r.*,b.* FROM crm_user u,crm_role
+		r,crm_bumen b where
+		u.urole = r.id AND u.ubumen = b.bmid and uid = #{id}
+	</select>
+
+	<update id="updateyh" parameterType="User">
+		UPDATE crm_user SET uname =
+		#{uname}, ucode = #{ucode},
+		upwd = #{upwd}, uphone = #{uphone}, urole =
+		#{urole}, ubumen = #{ubumen}, sex = #{sex} WHERE uid = #{uid}
+
+	</update>
+
+	<delete id="deleteUser" parameterType="String">
+		DELETE FROM crm_user WHERE
+		uid=#{id}
+	</delete>
+
+	<select id="gongziid" parameterType="String" resultType="int">
+		SELECT
+		xid FROM crm_xinzi WHERE rid=#{id}
+	</select>
+
+	<resultMap type="User" id="ul">
+		<id property="uid" column="uid" />
+		<association property="role" javaType="Role">
+			<id property="id" column="r_id" />
+		</association>
+		<association property="bmen" javaType="Bumen">
+			<id property="bmid" column="bmid" />
+		</association>
+	</resultMap>
+	<select id="loginss" resultMap="ul" parameterType="String">
+		SELECT
+		u.*,r.id AS r_rid,r.*,b.* FROM crm_user u,crm_role
+		r,crm_bumen b where
+		u.urole = r.id AND u.ubumen = b.bmid and u.ucode= #{d1} AND u.upwd =
+		#{d2}
+	</select>
+
+	<update id="gxmm" parameterType="String">
+		UPDATE crm.crm_user SET upwd =
+		#{d2} WHERE uid = #{d1}
+	</update>
+
+	<select id="bmrole" parameterType="String" resultType="int">
+		SELECT
+		bmdj
+		FROM crm_bumen WHERE bmid =#{d1}
+	</select>
+
+	<select id="sjlmza" parameterType="String" resultType="String">
+		SELECT
+		bmjl FROM crm_bumen WHERE bmid= #{d1}
+	</select>
+
+	<select id="bmdid" parameterType="String" resultType="Bumen">
+		SELECT *
+		FROM crm_bumen WHERE bmjl= #{d1}
+	</select>
+
+	<update id="schgx" parameterType="String">
+		UPDATE crm.crm_user SET ubumen
+		= 1 WHERE ubumen = #{d1}
+	</update>
+
+	<delete id="schsc" parameterType="String">
+		DELETE FROM crm_bumen WHERE
+		bmid = #{d1}
+	</delete>
+
+</mapper>

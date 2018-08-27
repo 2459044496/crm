@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crm.mapper.BumenMapper">
+	<resultMap type="Bumen" id="blist">
+		<id property="bmid" column="bmid" />
+		<association property="role" javaType="Role">
+			<id property="id" column="id" />
+		</association>
+		<association property="user" javaType="User">
+			<id property="uid" column="uid" />
+		</association>
+	</resultMap>
+	<!-- 获取客户列表 -->
+	<select id="getBumens" resultMap="blist">
+		SELECT * FROM crm_bumen b,crm_user u,crm_role r
+		<where>
+			b.bmdj=r.id AND b.bmid = u.ubumen AND 4 > u.urole
+			<if test="umingzi != null">
+				and b.bmname LIKE CONCAT('%',#{umingzi},'%')
+			</if>
+		</where>
+		ORDER BY b.bmid LIMIT #{from},#{psize}
+	</select>
+
+	<select id="getCount" resultType="int" parameterType="String">
+		SELECT COUNT(1) FROM crm_bumen
+		<where>
+			1=1
+			<if test="umingzi != null">
+				and bmname LIKE CONCAT('%',#{umingzi},'%')
+			</if>
+		</where>
+	</select>
+
+	<select id="getRoles" resultType="Role">
+		SELECT * FROM crm_role WHERE id
+		!= 4
+	</select>
+
+	<select id="getUsers" resultType="User">
+		SELECT * FROM crm_user WHERE
+		urole > 2
+	</select>
+
+	<select id="getjlUsers" resultType="User">
+		SELECT * FROM crm_user WHERE
+		urole = 2
+	</select>
+
+	<insert id="inserb" parameterType="Bumen" useGeneratedKeys="true"
+		keyProperty="bmid">
+		INSERT INTO crm.crm_bumen (bmname,bmdj,bmjl)
+		VALUES
+		(#{bmname},#{bmdj},#{bmjl})
+	</insert>
+
+	<select id="getzxbm" resultType="int">
+		SELECT MAX(bmid) FROM crm_bumen
+	</select>
+
+	<update id="updatejs" parameterType="int">
+		UPDATE crm_user SET urole =
+		#{ujs},ubumen = #{ubm},xzid=#{xzbh} WHERE uid = #{uid}
+	</update>
+
+	<delete id="delebm" parameterType="int">
+		DELETE FROM crm_bumen WHERE
+		bmid=#{bid}
+	</delete>
+
+	<update id="deleup" parameterType="int">
+		UPDATE crm_user SET urole =
+		4,ubumen = 1,xzid=1 WHERE ubumen = #{bid}
+	</update>
+
+	<select id="hqname" resultType="String" parameterType="String">
+		SELECT
+		bmjl FROM crm_bumen where bmid=#{d1}
+	</select>
+
+	<update id="scjhsc" parameterType="String">
+		UPDATE crm.crm_bumen set bmjl =
+		'陈总' WHERE bmjl = #{d1}
+	</update>
+
+
+</mapper>

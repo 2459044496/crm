@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crm.mapper.JianliMapper">
+
+	<!-- 获取简历列表 -->
+	<select id="getJianlis" resultType="Jianli">
+		SELECT  mid,mname,mphone,mdatetime,mzwms  FROM  crm_jianli	
+		<where>
+			1=1
+			<if test="umingzi != null">
+				and mname LIKE CONCAT('%',#{umingzi},'%')
+			</if>
+			
+		</where>
+		ORDER BY mid DESC LIMIT #{from},#{psize}
+	</select>
+	
+	<select id="getCount" resultType="int" parameterType="String">
+		SELECT COUNT(1) FROM crm_jianli
+		<where>
+			1=1
+			<if test="umingzi != null">
+				and mname LIKE CONCAT('%',#{umingzi},'%')
+			</if>
+		</where>
+	</select>
+	
+	
+	<select id="getJianli" resultType="Jianli">
+		SELECT * FROM crm_jianli
+	</select>
+	
+	<delete id="deletejianli" parameterType="int">
+		DELETE FROM crm_jianli WHERE MID=#{mid}
+	</delete>
+
+
+	<insert id="addjianli" parameterType="jianli" useGeneratedKeys="true"
+		keyProperty="mid">
+		INSERT INTO crm.crm_jianli 
+	    (mname, mphone, mdatetime, mzwms)
+	    VALUES
+	    (#{mname}, #{mphone}, #{mdatetime},#{mzwms});
+	</insert>
+
+
+    <select id="getjianliforajax" resultType="Jianli" parameterType="String">
+		SELECT * FROM crm_jianli WHERE mphone = #{mphone}
+	</select>
+
+</mapper>
